@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import Die from "./Die.js";
 import React, { Component } from "react";
+import "./RollDice.css";
 
 class RollDice extends Component {
   static defaultProps = {
@@ -8,7 +9,7 @@ class RollDice extends Component {
   };
   constructor(props) {
     super(props);
-    this.state = { die1: "one", die2: "one" };
+    this.state = { die1: "one", die2: "one", rolling: false };
     this.roll = this.roll.bind(this);
   }
   roll() {
@@ -18,15 +19,21 @@ class RollDice extends Component {
     const newDie2 =
       this.props.sides[Math.floor(Math.random() * this.props.sides.length)];
     //set state with new rolls
-    this.setState({ die1: newDie1, die2: newDie2 });
+    this.setState({ die1: newDie1, die2: newDie2, rolling: true });
+    //wait one second, then set rolling to false
+    setTimeout(() => {
+      this.setState({ rolling: false });
+    }, 1000);
   }
   render() {
     return (
-      <div>
-        <Die face={this.state.die1} />
-        <Die face={this.state.die2} />
+      <div className="RollDice">
+        <Die face={this.state.die1} rolling={this.state.rolling} />
+        <Die face={this.state.die2} rolling={this.state.rolling} />
         <div>
-          <button onClick={this.roll}>Roll Dice</button>
+          <button disabled={this.state.rolling} onClick={this.roll}>
+            {this.state.rolling ? "Rolling..." : "Roll Dice"}
+          </button>
         </div>
       </div>
     );
